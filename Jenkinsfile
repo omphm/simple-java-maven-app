@@ -11,7 +11,7 @@ pipeline{
     stages{
         stage("A"){
             steps{
-                echo "======== executing A == Anurag-changes ======"
+                echo "======== executing A == Anurag-changes again ======"
                 sh 'mvn -B -DskipTests clean package'
             }
             post{
