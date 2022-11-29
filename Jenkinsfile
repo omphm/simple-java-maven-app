@@ -9,7 +9,7 @@ pipeline{
             skipStagesAfterUnstable()
     }
     stages{
-        stage("A"){
+        stage("Build"){
             steps{
                 echo "======== executing A == Anurag-changes again ======"
                 sh 'mvn -B -DskipTests clean package'
@@ -30,6 +30,44 @@ pipeline{
             steps{
                 echo "======++++running Test++++===="
                 sh 'mvn test'
+            }
+        }
+        stage("Sonarqube Analysis"){
+            steps{
+                echo "====++++executing Sonarqube Analysis++++===="
+                withSonarQubeEnv('SonarQube') {
+                sh 'mvn sonar:sonar'
+            }
+            }
+            post{
+                always{
+                    echo "====++++always++++===="
+                }
+                success{
+                    echo "====++++Sonarqube Analysis executed successfully++++===="
+                }
+                failure{
+                    echo "====++++Sonarqube Analysis execution failed++++===="
+                }
+       
+            }
+        }
+        stage("Deploy"){
+            steps{
+                echo "====++++executing Deploy++++===="
+                sh './jenkins/scripts/deliver.sh'
+            }
+            post{
+                always{
+                    echo "====++++always++++===="
+                }
+                success{
+                    echo "====++++Deploy executed successfully++++===="
+                }
+                failure{
+                    echo "====++++Deploy execution failed++++===="
+                }
+       
             }
         }
     }
