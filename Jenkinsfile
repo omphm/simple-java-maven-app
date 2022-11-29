@@ -2,16 +2,16 @@ pipeline{
     agent{
         docker {
             image 'maven:3.8.1-adoptopenjdk-11'
-            args '-v /root/.m2:/root/.m2'
+            args -v /root/.m2:/root/.m2
         }
     }
     options {
-        skipStagesAfterUnstable()
+            skipStagesAfterUnstable()
     }
     stages{
-        stage("Build"){
+        stage("A"){
             steps{
-                echo "========Building Java project========"
+                echo "======== executing A == Anurag-changes ======"
                 sh 'mvn -B -DskipTests clean package'
             }
             post{
@@ -26,49 +26,17 @@ pipeline{
                 }
             }
         }
-
         stage("Test"){
             steps{
-                echo "====++++running Test++++===="
+                echo "======++++running Test++++===="
                 sh 'mvn test'
-            }
-            post{
-                always{
-                    echo "====++++always++++===="
-                    junit "target/surefire-reports/*.xml"
-                }
-                success{
-                    echo "====++++Test executed successfully++++===="
-                }
-                failure{
-                    echo "====++++Test execution failed++++===="
-                }
-        
-            }
-        }
-
-        stage("Deploy"){
-            steps{
-                echo "====++++executing Deploy++++===="
-                sh './jenkins/scripts/deliver.sh'
-            }
-            post{
-                always{
-                    echo "====++++always++++===="
-                }
-                success{
-                    echo "====++++Deploy executed successfully++++===="
-                }
-                failure{
-                    echo "====++++Deploy execution failed++++===="
-                }
-        
             }
         }
     }
     post{
         always{
             echo "========always========"
+            junit "target/surefire-reports/*.xml" 
         }
         success{
             echo "========pipeline executed successfully ========"
